@@ -1,7 +1,7 @@
 /* 
  * File:   main.cpp
  * Author: Paul Ingram
- * Created on May 2, 2021, 11 PM
+ * Created on May 2, 2022, 11 PM
  * Purpose:  Mancala 17C Version 5
  */
 
