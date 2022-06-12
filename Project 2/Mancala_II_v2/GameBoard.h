@@ -1,0 +1,180 @@
+/* 
+ * File:   GameBoard.h
+ * Author: Paul
+ *
+ * Created on June 7, 2022, 6:05 PM
+ */
+
+#ifndef GAMEBOARD_H
+#define GAMEBOARD_H
+
+#include <vector>
+#include <array>
+#include <string>
+using namespace std;
+
+class GameBoard{
+    private:
+        vector<vector<int>> board;
+        vector<int> cells;
+        string player[2];
+        int side=1;
+    public:
+        GameBoard(){
+            cout<<"This is Mancala"<<endl;
+            cout<<"Enter Player 1 Name: ";
+            cin>>player[0];
+            cout<<"Enter Player 2 Name: ";
+            cin>>player[1];
+    
+            setCells();
+            setBoard();
+        }
+        
+        void showBoard(){
+            cout<<"|"<<cells[5]<<"|"<<cells[4]<<"|"<<cells[3]<<"|"<<cells[2]<<"|"
+                <<cells[1]<<"|"<<cells[0]<<"|"<<endl;
+            cout<<cells[6]<<"==========="<<cells[13]<<endl;
+            cout<<"|"<<cells[7]<<"|"<<cells[8]<<"|"<<cells[9]<<"|"<<cells[10]<<"|"
+                <<cells[11]<<"|"<<cells[12]<<"|"<<endl;
+        }
+        
+        int gameOver(){
+            int top=0, bottom=0;
+            for(int i=0;i<6;i++){
+                top+=cells[i];
+            }
+            for(int i=7;i<13;i++){
+                bottom+=cells[i];
+            }
+            return top || bottom;
+        }
+        
+        void plr1Turn(){
+            showBoard();
+            int choice;
+            cout<<player[0]<<" select a cell on the top row 1-6 (L-R)"<<endl;
+            cin>>choice;
+            
+            while(choice<1 || choice>6){
+                cout<<"Please select a cell between 1-6 (L-R)"<<endl;
+                cin>>choice;
+            }
+            
+            int marbles=cells[6-choice];
+            int cell=board[6-choice][0];
+            cells[6-choice]=0;
+            while(marbles){
+                if(cell==13){
+                    cell=0;
+                    cells[cell]++;
+                    cell=board[cell][0];
+                    marbles--;
+                }
+                else{
+                    cells[cell]++;
+                    cell=board[cell][0];
+                    marbles--;
+                }
+            }
+            cell--;
+            
+            if(cell==6){
+                cout<<"You have earned another turn, go again"<<endl;
+                side=1;
+            }
+            else if(cell>=0 && cell<=5 && cells[cell]==1){
+                cout<<"Capture!"<<endl;
+                cells[6]+=cells[board[cell][1]]+1;
+                cells[board[cell][1]]=0;
+                cells[cell]=0;
+                side=2;
+            }
+            else side=2;
+        }
+        
+        void plr2Turn(){
+            showBoard();
+            
+            int choice;
+            cout<<player[1]<<" select a cell on the bottom row 1-6 (L-R)"<<endl;
+            cin>>choice;
+            
+            while(choice<1 || choice>6){
+                cout<<"Please select a cell between 1-6 (L-R)"<<endl;
+                cin>>choice;
+            }
+            
+            int marbles=cells[6+choice];
+            int cell=board[6+choice][0];
+            cells[6+choice]=0;
+            while(marbles){
+                if(cell==6){
+                    cell=7;
+                    cells[cell]++;
+                    cell=board[cell][0];
+                    marbles--;
+                }
+                else{
+                    cells[cell]++;
+                    cell=board[cell][0];
+                    marbles--;
+                }
+            }
+            cell--;
+            
+            if(cell==13){
+                cout<<"You have earned another turn, go again"<<endl;
+                side=2;
+            }
+            else if(cell>=7 && cell<=12 && cells[cell]==1){
+                cout<<"Capture!"<<endl;
+                cells[13]+=cells[board[cell][1]]+1;
+                cells[board[cell][1]]=0;
+                cells[cell]=0;
+                side=2;
+            }
+            else side=1;
+        }
+        
+        int getSide(){
+            return side;
+        }
+        
+        void setCells(){
+            for(int i=0;i<14;i++){
+                cells.push_back(0);
+            }
+        }
+        
+        void setBoard(){
+            for(int i=0;i<14;i++){
+                vector<int> v;
+                board.push_back(v);
+        
+                if(i==6){
+                    board[i].push_back(i+1);
+                    board[i].push_back(i-1);
+                    cells[i]=0;
+                }
+                else if(i==13){
+                    board[i].push_back(0);
+                    board[i].push_back(i-1);
+                    cells[i]=0;
+                }
+                else if(i>=0 && i<=5){
+                    board[i].push_back(i+1);
+                    board[i].push_back(12-i);
+                    cells[i]=6;
+                }
+                else if(i>=7 && i<=12){
+                    board[i].push_back(i+1);
+                    board[i].push_back(12-i);
+                    cells[i]=6;
+                }
+            }
+        }
+};
+
+#endif /* GAMEBOARD_H */
+
